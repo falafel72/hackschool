@@ -3,6 +3,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import './App.css';
 import MemeGenerator from './pages/MemeGenerator';
+import MemeGallery from './pages/MemeGallery';
 
 /** Main app controller */
 class App extends React.Component {
@@ -39,7 +40,11 @@ class App extends React.Component {
           render = {(routeProps) => 
             <MemeGenerator {...routeProps} memeArray={this.state.memeArray} />
           } />
-        <Route path="/gallery" />
+        <Route 
+          path="/gallery"
+          render = {(routeProps) =>
+            <MemeGallery {...routeProps} />   
+          } />
         </div>
       </Router>
     );
