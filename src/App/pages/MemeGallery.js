@@ -1,5 +1,7 @@
 import React from 'react'
 
+let memeId = 0; 
+
 /** Component that handles the overall meme gallery page.*/
 class MemeGallery extends React.Component {
   
@@ -13,6 +15,7 @@ class MemeGallery extends React.Component {
   // }
 
   render() {
+    memeId = 0;
     return( 
       <div>
         <MemeModel />
@@ -21,8 +24,6 @@ class MemeGallery extends React.Component {
     );
   }
 }
-
-let memeId = 0; 
 
 // Component that handles each meme displayed.
 class MemeModel extends React.Component{
