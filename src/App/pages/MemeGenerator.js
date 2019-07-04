@@ -1,5 +1,19 @@
 import React from 'react';
 
+/** Component for selecting meme template */
+function TemplateButton(props) {
+  return (
+    <img 
+        key={props.meme.id}
+        width='50' 
+        height='50' 
+        src={props.meme.url} 
+        alt='' 
+        onClick={props.reselectImage}
+    ></img>
+  );
+}
+
 /** Component that handles the meme generator */
 class MemeGenerator extends React.Component {
   constructor() {
@@ -9,10 +23,17 @@ class MemeGenerator extends React.Component {
       currentMemeIdx: 0,
       imgWidth: 0, 
       imgHeight: 0,
-      memeName: "test"
+      memeName: 'test'
     }
 
+    this.reselectImage = this.reselectImage.bind(this);
     this.handleInput = this.handleInput.bind(this);
+  }
+
+  reselectImage(meme) {
+    this.setState({
+      currentMemeIdx: this.props.memeArray.indexOf(meme)
+    });
   }
 
   handleInput(event) {
@@ -21,25 +42,25 @@ class MemeGenerator extends React.Component {
 
   render() {
     let imgObj = this.props.memeArray ? this.props.memeArray[this.state.currentMemeIdx] : null;
+    let memeDivList = this.props.memeArray ? this.props.memeArray.map((meme) => 
+      <TemplateButton 
+        key={meme.id} 
+        meme={meme} 
+        reselectImage={() => this.reselectImage(meme)} />
+    ) : null;
     return( 
       <div className='meme-gen'>
         {/* align left  */}
-        <div className="img-preview">
-          {/* <img src={
-            this.props.memeArray ? 
-            this.props.memeArray[this.state.currentMemeIdx].url
-            : ''
-          } alt='Loading...'></img> */}
+        <div className='img-preview'>
           <Canvas imgObj={imgObj} />
         {/* align right */}
         </div>
         <div className='template-search' >
           <input id='search' type='text' onChange={this.handleInput}></input>
           <div id='catalogue'>
-            <h2>{imgObj ? imgObj.name : "Loading..."}</h2>
-            {/* <h2>{this.state.memeName}</h2> */}
+            <h2>{imgObj ? imgObj.name : 'Loading...'}</h2>
             <div id='meme-templates'>
-              {/* {this.props.memeArray.map()} */}
+              {memeDivList}
             </div>
           </div>
         </div>
