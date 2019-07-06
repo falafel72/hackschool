@@ -26,9 +26,21 @@ class App extends React.Component {
         }
       });
     this.state = {
-      memeArray: null
+      memeArray: null,
+      number: -1 //testing link between server & react
     }
+
+    this.handleSubmit = this.handleSubmit.bind(this);
   } 
+
+  // calls the server and expects a response in the form of a JSON
+  handleSubmit(event){
+    event.preventDefault();
+    fetch('/users')
+      .then(response => response.json())
+      .then(state => this.setState(state));
+  }
+
   render() {
     return (
       <Router>
@@ -46,6 +58,10 @@ class App extends React.Component {
             <MemeGallery {...routeProps} />   
           } />
         </div>
+        <form onSubmit={this.handleSubmit}>
+        <button type="Submit"> Submit </button>
+        </form>
+        <p> Hello number {this.state.number} </p>
       </Router>
     );
   }
