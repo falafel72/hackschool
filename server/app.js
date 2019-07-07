@@ -7,13 +7,32 @@ const logger = require('morgan');
 // url routes 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+// const uploadRouter = require('./routes/upload');
 
 // MongoDB database
 const mongoClient = require('mongodb').MongoClient;
 const url = "mongodb://localhost:27017/memedb";
+const options = {
+  useNewUrlParser: true 
+}
 
+let database; 
+
+// express setup
 const app = express();
 
+/** Initially creates the MongoDB database **/
+mongoClient.connect(url, options, function(err, db) {
+    if (err) throw err;
+    console.log("Database has been created!");
+
+    let dbo = db.db("memedb");
+    dbo.createCollection("memes", function(err, res){
+        if (err) throw err;
+        console.log("Meme Collection created!");
+    });
+    database = dbo;
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -26,7 +45,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/test', usersRouter);
+app.post('/upload', upload);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -44,15 +64,10 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-/** Initially creates the MongoDB database **/
-mongoClient.connect(url, function(err, db) {
-    if (err) throw err;
-    console.log("Database has been created!");
-
-    // TODO(daniel): Create the collections and fields 
-
-
-    db.close();
-})
+// upload router to send an entry to the database
+function upload(req, res){
+  database.collection("memes").insertOne({name: "Daniel Truong"});
+  res.redirect('/');
+}
 
 module.exports = app;

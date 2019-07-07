@@ -36,7 +36,7 @@ class App extends React.Component {
   // calls the server and expects a response in the form of a JSON
   handleSubmit(event){
     event.preventDefault();
-    fetch('/users')
+    fetch('/test')
       .then(response => response.json())
       .then(state => this.setState(state));
   }
