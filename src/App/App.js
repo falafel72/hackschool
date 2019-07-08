@@ -20,15 +20,49 @@ class App extends React.Component {
       .then(response => { 
         if (response.data.success) {
           let memes = response.data.data.memes; 
-          this.setState({
-            memeArray: memes
-          });
+          this.setState((state) => ({
+            memeArray: memes,
+            currentMeme: memes[0],
+            displayName: memes[0].name,
+            isBold: true
+          }));
         }
       });
     this.state = {
-      memeArray: null
+      memeArray: null,
+      currentMeme: null,
+      displayName: 'Loading...',
+      isBold: false
     }
+
+    this.reselectMeme = this.reselectMeme.bind(this);
+    this.changeText = this.changeText.bind(this);
+    this.resetText = this.resetText.bind(this);
   } 
+  
+  /* called when meme template is changed */
+  reselectMeme(meme) {
+    this.setState((state) => ({
+      currentMeme: meme
+    }));
+  }
+
+  /* called when text needs to be changed when hovering over different templates */
+  changeText(meme) {
+    this.setState((state,props) => ({
+      displayName: meme.name,
+      isBold: (meme === state.currentMeme)
+    }));
+  }
+
+  /* called when text needs to be reset to display the name of the current meme */
+  resetText() {
+    this.setState((state,props) => ({
+      displayName: state.currentMeme.name,
+      isBold: true
+    }));
+  }
+
   render() {
     return (
       <Router>
@@ -38,7 +72,16 @@ class App extends React.Component {
           exact={true}
           path='/' 
           render = {(routeProps) => 
-            <MemeGenerator {...routeProps} memeArray={this.state.memeArray} />
+            <MemeGenerator 
+              {...routeProps} 
+              memeArray={this.state.memeArray} 
+              currentMeme={this.state.currentMeme}
+              displayName={this.state.memeArray ? this.state.displayName : 'Loading...'}
+              reselectMeme={this.reselectMeme}
+              changeText={this.changeText}
+              resetText={this.resetText}
+              isBold={this.state.isBold}
+            />
           } />
         <Route 
           path="/gallery"

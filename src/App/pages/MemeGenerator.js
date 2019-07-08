@@ -10,6 +10,9 @@ function TemplateButton(props) {
         src={props.meme.url} 
         alt='' 
         onClick={props.reselectImage}
+        onMouseOver={props.changeText}
+        onMouseLeave={props.resetText}
+        className='meme-template'
     ></img>
   );
 }
@@ -20,33 +23,25 @@ class MemeGenerator extends React.Component {
     super();
       
     this.state = {
-      currentMemeIdx: 0,
-      imgWidth: 0, 
-      imgHeight: 0,
-      memeName: 'test'
+      isBold: false
     }
 
-    this.reselectImage = this.reselectImage.bind(this);
     this.handleInput = this.handleInput.bind(this);
   }
 
-  reselectImage(meme) {
-    this.setState({
-      currentMemeIdx: this.props.memeArray.indexOf(meme)
-    });
-  }
-
   handleInput(event) {
-    this.setState({memeName: event.target.value})
+    // this.setState(() => ({memeName: event.target.value}));
   }
 
   render() {
-    let imgObj = this.props.memeArray ? this.props.memeArray[this.state.currentMemeIdx] : null;
+    let imgObj = this.props.memeArray ? this.props.currentMeme : null;
     let memeDivList = this.props.memeArray ? this.props.memeArray.map((meme) => 
       <TemplateButton 
         key={meme.id} 
         meme={meme} 
-        reselectImage={() => this.reselectImage(meme)} />
+        reselectImage={() => this.props.reselectMeme(meme)} 
+        changeText={() => this.props.changeText(meme)} 
+        resetText={this.props.resetText}/>
     ) : null;
     return( 
       <div className='meme-gen'>
@@ -58,7 +53,9 @@ class MemeGenerator extends React.Component {
         <div className='template-search' >
           <input id='search' type='text' onChange={this.handleInput}></input>
           <div id='catalogue'>
-            <h2>{imgObj ? imgObj.name : 'Loading...'}</h2>
+            <p style={{
+              fontWeight: this.props.isBold ? 'bold' : 'normal'
+            }}>{this.props.displayName}</p>
             <div id='meme-templates'>
               {memeDivList}
             </div>
@@ -102,8 +99,8 @@ class Canvas extends React.Component {
     let width;
     let height;
     if (this.props.imgObj) {
-      width = this.props.imgObj.width/2;
-      height = this.props.imgObj.height/2;
+      width = 500;
+      height = this.props.imgObj.height/(this.props.imgObj.width/500);
     } else {
       width = 0;
       height = 0;
