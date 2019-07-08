@@ -32,12 +32,15 @@ class App extends React.Component {
       memeArray: null,
       currentMeme: null,
       displayName: 'Loading...',
-      isBold: false
+      isBold: false,
+      number: -1
     }
 
     this.reselectMeme = this.reselectMeme.bind(this);
     this.changeText = this.changeText.bind(this);
     this.resetText = this.resetText.bind(this);
+
+    this.handleSubmit = this.handleSubmit.bind(this);
   } 
   
   /* called when meme template is changed */
@@ -61,6 +64,14 @@ class App extends React.Component {
       displayName: state.currentMeme.name,
       isBold: true
     }));
+  } 
+
+  // calls the server and expects a response in the form of a JSON
+  handleSubmit(event){
+    event.preventDefault();
+    fetch('/test')
+      .then(response => response.json())
+      .then(state => this.setState(state));
   }
 
   render() {
@@ -89,6 +100,10 @@ class App extends React.Component {
             <MemeGallery {...routeProps} />   
           } />
         </div>
+        <form onSubmit={this.handleSubmit}>
+        <button type="Submit"> Submit </button>
+        </form>
+        <p> Hello number {this.state.number} </p>
       </Router>
     );
   }
