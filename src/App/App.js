@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import './App.css';
 import MemeGenerator from './pages/MemeGenerator';
 import MemeGallery from './pages/MemeGallery';
-
+  
 /** Main app controller */
 class App extends React.Component {
   constructor(props) {
@@ -33,14 +33,11 @@ class App extends React.Component {
       currentMeme: null,
       displayName: 'Loading...',
       isBold: false,
-      number: -1
     }
 
     this.reselectMeme = this.reselectMeme.bind(this);
     this.changeText = this.changeText.bind(this);
     this.resetText = this.resetText.bind(this);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
   } 
   
   /* called when meme template is changed */
@@ -65,14 +62,6 @@ class App extends React.Component {
       isBold: true
     }));
   } 
-
-  // calls the server and expects a response in the form of a JSON
-  handleSubmit(event){
-    event.preventDefault();
-    fetch('/test')
-      .then(response => response.json())
-      .then(state => this.setState(state));
-  }
 
   render() {
     return (
@@ -100,10 +89,6 @@ class App extends React.Component {
             <MemeGallery {...routeProps} />   
           } />
         </div>
-        <form onSubmit={this.handleSubmit}>
-        <button type="Submit"> Submit </button>
-        </form>
-        <p> Hello number {this.state.number} </p>
       </Router>
     );
   }
