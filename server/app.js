@@ -50,6 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/test', usersRouter);
 app.post('/upload', upload);
+app.get('/getmemes', getMemes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -76,6 +77,16 @@ function upload(req, res){
   res.redirect('/');
 }
 
+// getMemes router which sends the meme data to the front-end
+function getMemes(req, res){
+  let query = {};
+  memedb.find(query).toArray(function(err, result){ 
+    if (err) throw err;
+    console.log(result);
+    res.send(JSON.stringify(result));  
+  });
+}
+
 // helper function created to create a meme object in the database with its fields 
 function sendToDatabase(memeId, fields){
   memedb.insertOne(fields, function(err, res){
@@ -93,7 +104,7 @@ function populateMemeFields(photoURL, topText, bottomText, user){
     bottomText: bottomText,
     user: user,
     likes: 0
-  }
+  };
 
   // increments id so each meme has a unique ID
   id++;
