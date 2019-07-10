@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 /** Component for selecting meme template */
 function TemplateButton(props) {
@@ -12,8 +13,8 @@ function TemplateButton(props) {
         onClick={props.reselectImage}
         onMouseOver={props.changeText}
         onMouseLeave={props.resetText}
-        className='meme-template'
-    ></img>
+        className='meme-template' >
+    </img>
   );
 }
 
@@ -27,10 +28,29 @@ class MemeGenerator extends React.Component {
     }
 
     this.handleInput = this.handleInput.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleInput(event) {
     // this.setState(() => ({memeName: event.target.value}));
+  }
+
+  handleSubmit(event){
+    event.preventDefault();
+    let myImg = {
+      photoURL: this.props.currentMeme.url,
+      topText: "top",
+      bottomText: "bottom",
+      user: "Daniel Truong"
+    };
+    let post = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(myImg),
+    };
+    axios.post('/upload', myImg);
   }
 
   render() {
@@ -61,6 +81,13 @@ class MemeGenerator extends React.Component {
             </div>
           </div>
         </div>
+
+        <div>
+          <form onSubmit={this.handleSubmit} method="POST">
+            <button type="Submit"> Submit Meme </button>
+          </form> 
+        </div>
+
       </div>
     );
   }

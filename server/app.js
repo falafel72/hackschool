@@ -16,7 +16,9 @@ const options = {
   useNewUrlParser: true 
 }
 
-let database; 
+let database;
+let memedb; 
+let id = 0;
 
 // express setup
 const app = express();
@@ -32,6 +34,7 @@ mongoClient.connect(url, options, function(err, db) {
         console.log("Meme Collection created!");
     });
     database = dbo;
+    memedb = database.collection("memes");
 });
 
 // view engine setup
@@ -46,7 +49,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/test', usersRouter);
-app.get('/upload', upload);
+app.post('/upload', upload);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -66,8 +69,35 @@ app.use(function(err, req, res, next) {
 
 // upload router to send an entry to the database
 function upload(req, res){
-  database.collection("memes").insertOne({name: "Daniel Truong"});
+  memeId = "meme_"+ id;
+  let params = req.body;
+  let fields = populateMemeFields(params.photoURL, params.topText, params.bottomText, params.user);
+  sendToDatabase(memeId, fields);
   res.redirect('/');
+}
+
+// helper function created to create a meme object in the database with its fields 
+function sendToDatabase(memeId, fields){
+  memedb.insertOne(fields, function(err, res){
+    if (err) throw err; 
+    console.log("Uploaded fields for " + memeId);
+  });
+}
+
+// helper function to create & populate the JSON that will be sent to the database
+function populateMemeFields(photoURL, topText, bottomText, user){
+  let memeObj = {
+    id: id,
+    photoURL: photoURL,
+    topText: topText,
+    bottomText: bottomText,
+    user: user,
+    likes: 0
+  }
+
+  // increments id so each meme has a unique ID
+  id++;
+  return memeObj;
 }
 
 module.exports = app;
