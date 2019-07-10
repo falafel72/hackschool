@@ -43,14 +43,13 @@ class MemeGenerator extends React.Component {
       bottomText: "bottom",
       user: "Daniel Truong"
     };
-    let post = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(myImg),
-    };
-    axios.post('/upload', myImg);
+    axios.post('/upload', myImg)
+      .then(response => {
+        console.log("Image has been uploaded: " + myImg.photoURL);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   render() {
