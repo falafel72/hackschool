@@ -1,42 +1,40 @@
-import React from 'react'
-
-let memeId = 0; 
+import React from 'react';
+require('../style/meme.css');
 
 /** Component that handles the overall meme gallery page.*/
 class MemeGallery extends React.Component {
-  
+
   constructor() {
     super();
-      
+
+    fetch('/getmemes')
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          memeArray: data,
+        })
+      });
+ 
     this.state = {
       memeArray: null,
     }
 
-    this.handleGetMemes = this.handleGetMemes.bind(this);
-  }
-
-  // event handler which retreives memes from the database
-  handleGetMemes(event){
-    event.preventDefault();
-    fetch('/getmemes')
-      .then(response => response.json())
-      .then(res => {
-        this.setState({ memeArray: JSON.stringify(res) });
-      });
   }
 
   render() {
-    memeId = 0;
+    let ourFavorites = this.state.memeArray ? this.state.memeArray.map ((meme) => 
+      <MemeModel 
+        key={meme.id}
+        photoURL={meme.photoURL}
+        topText={meme.topText}
+        bottomText={meme.bottomText}
+        user={meme.user}
+        likes={meme.likes}
+      />
+    ) : null;
     return( 
       <div>
-      <div>
-        <MemeModel />
-        <MemeModel />
-      </div>
-      <form onSubmit={this.handleGetMemes} method="GET">
-        <button type="Submit"> Get Memes </button>
-      </form> 
-      <p> {this.state.memeArray} </p>
+        {ourFavorites}
       </div>
     );
   }
@@ -44,20 +42,58 @@ class MemeGallery extends React.Component {
 
 // Component that handles each meme displayed.
 class MemeModel extends React.Component{
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
-        id: memeId,
-        upvotes: 0
+      id: this.props.id,
+      photoURL: this.props.photoURL,
+      topText: this.props.topText,
+      bottomText: this.props.bottomText,
+      user: this.props.user,
     };
-    memeId++;
   }
 
   render(){
     return(
-      <h1> This is meme {this.state.id}. </h1>
+      <div className="memeModel">
+        <div className="memeImageText">
+          <img className="memeImage" src={this.state.photoURL} alt={this.state.photoURL}/>
+          <h2> {this.props.topText} </h2>
+          <h2> {this.props.bottomText} </h2>
+        </div>
+        <div className="controls">
+          <h4> by {this.props.user} </h4>
+          <LikesController likes={this.props.likes} />
+        </div>
+      </div>
     )
   }
+}
+
+class LikesController extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      likes: this.props.likes,
+      isBolded: false,
+    }
+
+    this.handleLike = this.handleLike.bind(this);
+  }
+
+  handleLike(event){
+    event.preventDefault();
+  }
+
+  render(){
+    let buttonType = this.state.isBolded ? "unselected" : "selected";
+    return(
+      <form onSubmit={this.handleLike}>
+        <button className={buttonType} type="Submit">👍 {this.state.likes}</button>
+      </form> 
+    )
+  }
+
 }
 
 export default MemeGallery;
