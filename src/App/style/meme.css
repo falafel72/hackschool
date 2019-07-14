@@ -3,6 +3,16 @@
     margin-bottom: 20px;
 }
 
+.img-preview {
+    float: left;
+    width: 50%;
+}
+
+.template-search {
+    float: right;
+    width: 50%;
+}
+
 /*
 .memeModel{
     height: 500px;

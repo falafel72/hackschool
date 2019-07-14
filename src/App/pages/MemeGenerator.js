@@ -24,15 +24,19 @@ class MemeGenerator extends React.Component {
     super();
       
     this.state = {
-      isBold: false
+      searchTerm: ""
     }
 
     this.handleInput = this.handleInput.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.checkMatch = this.checkMatch.bind(this);
   }
 
   handleInput(event) {
-    // this.setState(() => ({memeName: event.target.value}));
+    event.persist();
+    this.setState(() => ({
+      searchTerm: event.target.value
+    }));
   }
 
   handleSubmit(event){
@@ -51,22 +55,32 @@ class MemeGenerator extends React.Component {
         console.log(err);
       });
   }
+  
+  checkMatch(meme) {
+    let regexp = new RegExp(this.state.searchTerm,'gi');
+    return (this.state.searchTerm === "" || meme.name.match(regexp) != null);
+  }
 
   render() {
     let imgObj = this.props.memeArray ? this.props.currentMeme : null;
-    let memeDivList = this.props.memeArray ? this.props.memeArray.map((meme) => 
+    let memeDivList = this.props.memeArray ? this.props.memeArray.filter(this.checkMatch).map((meme) => (
       <TemplateButton 
         key={meme.id} 
         meme={meme} 
         reselectImage={() => this.props.reselectMeme(meme)} 
         changeText={() => this.props.changeText(meme)} 
         resetText={this.props.resetText}/>
-    ) : null;
+    )) : null;
     return( 
       <div className='meme-gen'>
         {/* align left  */}
         <div className='img-preview'>
           <Canvas imgObj={imgObj} />
+          <div>
+            <form onSubmit={this.handleSubmit} method="POST">
+              <button type="Submit"> Submit Meme </button>
+            </form> 
+          </div>
         {/* align right */}
         </div>
         <div className='template-search' >
@@ -80,13 +94,6 @@ class MemeGenerator extends React.Component {
             </div>
           </div>
         </div>
-
-        <div>
-          <form onSubmit={this.handleSubmit} method="POST">
-            <button type="Submit"> Submit Meme </button>
-          </form> 
-        </div>
-
       </div>
     );
   }
