@@ -7,8 +7,27 @@ import MemeGallery from './pages/MemeGallery';
   
 /** Main app controller */
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  render() {
+    return (
+      <Router>
+        <div className="App">
+        <NavBar />
+        <MemeGeneratorWrapper />
+        <Route 
+          path="/gallery"
+          render = {(routeProps) =>
+            <MemeGallery {...routeProps} />   
+          } />
+        </div>
+      </Router>
+    );
+  }
+}
+
+class MemeGeneratorWrapper extends React.Component {
+  constructor() {
+    super();
+
     /* 
       TODO: 
         - shrink the images down by around half
@@ -38,12 +57,13 @@ class App extends React.Component {
     this.reselectMeme = this.reselectMeme.bind(this);
     this.changeText = this.changeText.bind(this);
     this.resetText = this.resetText.bind(this);
-  } 
-  
-  /* called when meme template is changed */
-  reselectMeme(meme) {
+  }
+
+   /* called when meme template is changed */
+   reselectMeme(meme) {
     this.setState((state) => ({
-      currentMeme: meme
+      currentMeme: meme,
+      isBold: true
     }));
   }
 
@@ -62,13 +82,10 @@ class App extends React.Component {
       isBold: true
     }));
   } 
-
+  
   render() {
     return (
-      <Router>
-        <div className="App">
-        <NavBar />
-        <Route 
+      <Route 
           exact={true}
           path='/' 
           render = {(routeProps) => 
@@ -83,13 +100,6 @@ class App extends React.Component {
               isBold={this.state.isBold}
             />
           } />
-        <Route 
-          path="/gallery"
-          render = {(routeProps) =>
-            <MemeGallery {...routeProps} />   
-          } />
-        </div>
-      </Router>
     );
   }
 }
