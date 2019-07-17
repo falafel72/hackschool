@@ -18,28 +18,39 @@ function TemplateButton(props) {
   );
 }
 
+function MemeTextBox(props) {
+  return (
+    <div className='memetext'>
+      <p>Text Box {props.index}</p>
+      <textarea 
+        cols='50' 
+        rows='5' 
+        // onChange={props.handleMemeText(props.key)}>
+        >
+      </textarea>
+    </div>
+  )
+}
+
 /** Component that handles the meme generator */
 class MemeGenerator extends React.Component {
   constructor() {
     super();
       
     this.state = {
-      searchTerm: ""
-    }
-
-    this.handleInput = this.handleInput.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.checkMatch = this.checkMatch.bind(this);
+      searchTerm: "",
+      memeText: []
+    };
   }
 
-  handleInput(event) {
+  handleInput = (event) => {
     event.persist();
     this.setState(() => ({
       searchTerm: event.target.value
     }));
   }
 
-  handleSubmit(event){
+  handleSubmit = (event) => {
     event.preventDefault();
     let myImg = {
       photoURL: this.props.currentMeme.url,
@@ -55,23 +66,37 @@ class MemeGenerator extends React.Component {
         console.log(err);
       });
   }
+
+  handleMemeText = (index) => {
+    return (text) => {
+      let newMemeTextArray = this.state.memeText;
+      newMemeTextArray[index] = text;
+      this.setState((state) => ({
+        memeText: newMemeTextArray
+      }));
+    };
+  }
   
-  checkMatch(meme) {
+  checkMatch = (meme) => {
     let regexp = new RegExp(this.state.searchTerm,'gi');
     return (this.state.searchTerm === "" || meme.name.match(regexp) != null);
+  }
+  
+  createTextBoxes = () => {
+    let boxList = [];
+    if (this.props.currentMeme) {
+      for (let i = 0; i < this.props.currentMeme.box_count; i++) {
+        boxList.push(
+          <MemeTextBox key={i} index= {i} handleMemeText={this.handleMemeText(i)}/>
+        );
+      }
+    }
+    return boxList;
   }
 
   render() {
     let imgObj = this.props.memeArray ? this.props.currentMeme : null;
-    let memeDivList = this.props.memeArray ? this.props.memeArray.filter(this.checkMatch).map((meme) => (
-      <TemplateButton 
-        key={meme.id} 
-        meme={meme} 
-        reselectImage={() => this.props.reselectMeme(meme)} 
-        changeText={() => this.props.changeText(meme)} 
-        resetText={this.props.resetText}/>
-    )) : null;
-    return( 
+    return ( 
       <div className='meme-gen'>
         {/* align left  */}
         <div className='img-preview'>
@@ -83,6 +108,9 @@ class MemeGenerator extends React.Component {
           </div>
         {/* align right */}
         </div>
+        <div className='textboxes'>
+          {this.createTextBoxes()}
+        </div>
         <div className='template-search' >
           <input id='search' type='text' onChange={this.handleInput}></input>
           <div id='catalogue'>
@@ -90,7 +118,17 @@ class MemeGenerator extends React.Component {
               fontWeight: this.props.isBold ? 'bold' : 'normal'
             }}>{this.props.displayName}</p>
             <div id='meme-templates'>
-              {memeDivList}
+              {
+                this.props.memeArray && 
+                this.props.memeArray.filter(this.checkMatch).map((meme) => (
+                  <TemplateButton 
+                  key={meme.id} 
+                  meme={meme} 
+                  reselectImage={() => this.props.reselectMeme(meme)} 
+                  changeText={() => this.props.changeText(meme)} 
+                  resetText={this.props.resetText}/>
+                ))
+              }
             </div>
           </div>
         </div>

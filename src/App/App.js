@@ -27,13 +27,6 @@ class App extends React.Component {
 class MemeGeneratorWrapper extends React.Component {
   constructor() {
     super();
-
-    /* 
-      TODO: 
-        - shrink the images down by around half
-        - add search functionality (search by meme name)
-        - add gallery for meme templates
-    */ 
     /* get meme data via get request */
     axios.get('https://api.imgflip.com/get_memes')
       .then(response => { 
