@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 /** Component for selecting meme template */
-function TemplateButton(props) {
+const TemplateButton = (props) => {
   return (
     <img 
         key={props.meme.id}
@@ -10,7 +10,7 @@ function TemplateButton(props) {
         height='50' 
         src={props.meme.url} 
         alt='' 
-        onClick={props.reselectImage}
+        onClick={props.reselectMeme}
         onMouseOver={props.changeText}
         onMouseLeave={props.resetText}
         className='meme-template' >
@@ -18,18 +18,17 @@ function TemplateButton(props) {
   );
 }
 
-function MemeTextBox(props) {
+const MemeTextBox = (props) => {
   return (
     <div className='memetext'>
-      <p>Text Box {props.index}</p>
+      <p>Text Box {props.index + 1}</p>
       <textarea 
         cols='50' 
         rows='5' 
-        // onChange={props.handleMemeText(props.key)}>
-        >
+        onChange={e => props.handleMemeText(props.index,e.target.value)}>
       </textarea>
     </div>
-  )
+  );
 }
 
 /** Component that handles the meme generator */
@@ -38,24 +37,22 @@ class MemeGenerator extends React.Component {
     super();
       
     this.state = {
-      searchTerm: "",
-      memeText: []
+      searchTerm: ""
     };
   }
 
-  handleInput = (event) => {
-    event.persist();
+  handleInput = (text) => {
     this.setState(() => ({
-      searchTerm: event.target.value
+      searchTerm: text 
     }));
   }
 
-  handleSubmit = (event) => {
+  uploadMeme = (event) => {
     event.preventDefault();
     let myImg = {
       photoURL: this.props.currentMeme.url,
-      topText: "top",
-      bottomText: "bottom",
+      topText: this.props.memeText[0],
+      bottomText: this.props.memeText[1],
       user: "Daniel Truong"
     };
     axios.post('/upload', myImg)
@@ -67,16 +64,6 @@ class MemeGenerator extends React.Component {
       });
   }
 
-  handleMemeText = (index) => {
-    return (text) => {
-      let newMemeTextArray = this.state.memeText;
-      newMemeTextArray[index] = text;
-      this.setState((state) => ({
-        memeText: newMemeTextArray
-      }));
-    };
-  }
-  
   checkMatch = (meme) => {
     let regexp = new RegExp(this.state.searchTerm,'gi');
     return (this.state.searchTerm === "" || meme.name.match(regexp) != null);
@@ -87,7 +74,7 @@ class MemeGenerator extends React.Component {
     if (this.props.currentMeme) {
       for (let i = 0; i < this.props.currentMeme.box_count; i++) {
         boxList.push(
-          <MemeTextBox key={i} index= {i} handleMemeText={this.handleMemeText(i)}/>
+          <MemeTextBox key={i} index={i} handleMemeText={this.props.handleMemeText}/>
         );
       }
     }
@@ -102,9 +89,8 @@ class MemeGenerator extends React.Component {
         <div className='img-preview'>
           <Canvas imgObj={imgObj} />
           <div>
-            <form onSubmit={this.handleSubmit} method="POST">
-              <button type="Submit"> Submit Meme </button>
-            </form> 
+            <button type="submit" onClick={this.uploadMeme}> Submit Meme </button>
+            <button type="submit" onClick={this.props.downloadMeme}>Download Meme</button>
           </div>
         {/* align right */}
         </div>
@@ -112,7 +98,7 @@ class MemeGenerator extends React.Component {
           {this.createTextBoxes()}
         </div>
         <div className='template-search' >
-          <input id='search' type='text' onChange={this.handleInput}></input>
+          <input id='search' type='text' onChange={e => this.handleInput(e.target.value)}></input>
           <div id='catalogue'>
             <p style={{
               fontWeight: this.props.isBold ? 'bold' : 'normal'
@@ -122,11 +108,11 @@ class MemeGenerator extends React.Component {
                 this.props.memeArray && 
                 this.props.memeArray.filter(this.checkMatch).map((meme) => (
                   <TemplateButton 
-                  key={meme.id} 
-                  meme={meme} 
-                  reselectImage={() => this.props.reselectMeme(meme)} 
-                  changeText={() => this.props.changeText(meme)} 
-                  resetText={this.props.resetText}/>
+                    key={meme.id} 
+                    meme={meme} 
+                    reselectMeme={() => this.props.reselectMeme(meme)} 
+                    changeText={() => this.props.changeText(meme)} 
+                    resetText={this.props.resetText}/>
                 ))
               }
             </div>

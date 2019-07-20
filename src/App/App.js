@@ -4,15 +4,32 @@ import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import './App.css';
 import MemeGenerator from './pages/MemeGenerator';
 import MemeGallery from './pages/MemeGallery';
+
+const config = require('../config.json');
   
 /** Main app controller */
 class App extends React.Component {
+  downloadImage = (url) => {
+    axios({
+      url: url,
+      method: 'GET',
+      responseType: 'blob', // important
+    }).then((response) => {
+       const url = window.URL.createObjectURL(new Blob([response.data]));
+       const link = document.createElement('a');
+       link.href = url;
+       link.setAttribute('download', 'file.pdf'); //or any other extension
+       document.body.appendChild(link);
+       link.click();
+    });
+  }
+
   render() {
     return (
       <Router>
         <div className="App">
         <NavBar />
-        <MemeGeneratorWrapper />
+        <MemeGeneratorWrapper downloadImage={this.downloadImage}/>
         <Route 
           path="/gallery"
           render = {(routeProps) =>
@@ -36,7 +53,8 @@ class MemeGeneratorWrapper extends React.Component {
             memeArray: memes,
             currentMeme: memes[0],
             displayName: memes[0].name,
-            isBold: true
+            isBold: true,
+            memeText: new Array(memes[0].box_count)
           }));
         }
       });
@@ -45,23 +63,21 @@ class MemeGeneratorWrapper extends React.Component {
       currentMeme: null,
       displayName: 'Loading...',
       isBold: false,
+      memeText: []
     }
-
-    this.reselectMeme = this.reselectMeme.bind(this);
-    this.changeText = this.changeText.bind(this);
-    this.resetText = this.resetText.bind(this);
   }
 
    /* called when meme template is changed */
-   reselectMeme(meme) {
+  reselectMeme = (meme) => {
     this.setState((state) => ({
       currentMeme: meme,
-      isBold: true
+      isBold: true,
+      memeText: state.memeText.slice(0,meme.box_count)
     }));
   }
 
   /* called when text needs to be changed when hovering over different templates */
-  changeText(meme) {
+  changeText = (meme) => {
     this.setState((state,props) => ({
       displayName: meme.name,
       isBold: (meme === state.currentMeme)
@@ -69,30 +85,72 @@ class MemeGeneratorWrapper extends React.Component {
   }
 
   /* called when text needs to be reset to display the name of the current meme */
-  resetText() {
+  resetText = () => {
     this.setState((state,props) => ({
       displayName: state.currentMeme.name,
       isBold: true
     }));
   } 
+
+  handleMemeText = (index,text) => {
+    let newMemeTextArray = this.state.memeText;
+    newMemeTextArray[index] = text;
+    this.setState((state) => ({
+      memeText: newMemeTextArray
+    }));
+  }
+
+  createMeme = () => {
+    let data = {
+      template_id: this.state.currentMeme.id,
+      username: config.username,
+      password: config.password,
+      text0: this.state.memeText[0],
+      text1: this.state.memeText[1],
+    }
+
+    // create post request
+    axios.post('https://api.imgflip.com/caption_image',data,(response) => {
+      console.log(response);
+      if (response.success) {
+        return response.data.url;
+      } else {
+        return null;
+      }
+    });
+  }
+
+  downloadMeme = () => {
+    let url = this.createMeme();
+    if (url) {
+      // console.log(url);
+      this.props.downloadImage(url);
+    } else {
+      console.log("Error with creating meme!");
+    }
+  }
   
   render() {
     return (
       <Route 
-          exact={true}
-          path='/' 
-          render = {(routeProps) => 
-            <MemeGenerator 
-              {...routeProps} 
-              memeArray={this.state.memeArray} 
-              currentMeme={this.state.currentMeme}
-              displayName={this.state.memeArray ? this.state.displayName : 'Loading...'}
-              reselectMeme={this.reselectMeme}
-              changeText={this.changeText}
-              resetText={this.resetText}
-              isBold={this.state.isBold}
-            />
-          } />
+        exact={true}
+        path='/' 
+        render = {(routeProps) => 
+          <MemeGenerator 
+            {...routeProps} 
+            memeArray={this.state.memeArray} 
+            currentMeme={this.state.currentMeme}
+            displayName={this.state.memeArray ? this.state.displayName : 'Loading...'}
+            reselectMeme={this.reselectMeme}
+            changeText={this.changeText}
+            resetText={this.resetText}
+            isBold={this.state.isBold}
+            handleMemeText={this.handleMemeText}
+            memeText={this.state.memeText}
+            downloadMeme={this.downloadMeme}
+          />
+        } 
+      />
     );
   }
 }
