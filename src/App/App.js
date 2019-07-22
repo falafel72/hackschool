@@ -110,7 +110,7 @@ class MemeGeneratorWrapper extends React.Component {
     }
 
     // create post request
-    axios.post('https://api.imgflip.com/caption_image',data,(response) => {
+    axios.post('https://api.imgflip.com/caption_image', data, (response) => {
       console.log(response);
       if (response.success) {
         return response.data.url;

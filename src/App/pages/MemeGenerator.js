@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 /** Component for selecting meme template */
-const TemplateButton = (props) => {
+function TemplateButton(props) {
   return (
     <img 
         key={props.meme.id}
@@ -10,24 +10,11 @@ const TemplateButton = (props) => {
         height='50' 
         src={props.meme.url} 
         alt='' 
-        onClick={props.reselectMeme}
+        onClick={props.reselectImage}
         onMouseOver={props.changeText}
         onMouseLeave={props.resetText}
         className='meme-template' >
     </img>
-  );
-}
-
-const MemeTextBox = (props) => {
-  return (
-    <div className='memetext'>
-      <p>Text Box {props.index + 1}</p>
-      <textarea 
-        cols='50' 
-        rows='5' 
-        onChange={e => props.handleMemeText(props.index,e.target.value)}>
-      </textarea>
-    </div>
   );
 }
 
@@ -37,22 +24,23 @@ class MemeGenerator extends React.Component {
     super();
       
     this.state = {
-      searchTerm: ""
-    };
+      isBold: false
+    }
+
+    this.handleInput = this.handleInput.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleInput = (text) => {
-    this.setState(() => ({
-      searchTerm: text 
-    }));
+  handleInput(event) {
+    // this.setState(() => ({memeName: event.target.value}));
   }
 
-  uploadMeme = (event) => {
+  handleSubmit(event){
     event.preventDefault();
     let myImg = {
       photoURL: this.props.currentMeme.url,
-      topText: this.props.memeText[0],
-      bottomText: this.props.memeText[1],
+      topText: "top",
+      bottomText: "bottom",
       user: "Daniel Truong"
     };
     axios.post('/upload', myImg)
@@ -64,60 +52,41 @@ class MemeGenerator extends React.Component {
       });
   }
 
-  checkMatch = (meme) => {
-    let regexp = new RegExp(this.state.searchTerm,'gi');
-    return (this.state.searchTerm === "" || meme.name.match(regexp) != null);
-  }
-  
-  createTextBoxes = () => {
-    let boxList = [];
-    if (this.props.currentMeme) {
-      for (let i = 0; i < this.props.currentMeme.box_count; i++) {
-        boxList.push(
-          <MemeTextBox key={i} index={i} handleMemeText={this.props.handleMemeText}/>
-        );
-      }
-    }
-    return boxList;
-  }
-
   render() {
     let imgObj = this.props.memeArray ? this.props.currentMeme : null;
-    return ( 
+    let memeDivList = this.props.memeArray ? this.props.memeArray.map((meme) => 
+      <TemplateButton 
+        key={meme.id} 
+        meme={meme} 
+        reselectImage={() => this.props.reselectMeme(meme)} 
+        changeText={() => this.props.changeText(meme)} 
+        resetText={this.props.resetText}/>
+    ) : null;
+    return( 
       <div className='meme-gen'>
         {/* align left  */}
         <div className='img-preview'>
           <Canvas imgObj={imgObj} />
-          <div>
-            <button type="submit" onClick={this.uploadMeme}> Submit Meme </button>
-            <button type="submit" onClick={this.props.downloadMeme}>Download Meme</button>
-          </div>
         {/* align right */}
         </div>
-        <div className='textboxes'>
-          {this.createTextBoxes()}
-        </div>
         <div className='template-search' >
-          <input id='search' type='text' onChange={e => this.handleInput(e.target.value)}></input>
+          <input id='search' type='text' onChange={this.handleInput}></input>
           <div id='catalogue'>
             <p style={{
               fontWeight: this.props.isBold ? 'bold' : 'normal'
             }}>{this.props.displayName}</p>
             <div id='meme-templates'>
-              {
-                this.props.memeArray && 
-                this.props.memeArray.filter(this.checkMatch).map((meme) => (
-                  <TemplateButton 
-                    key={meme.id} 
-                    meme={meme} 
-                    reselectMeme={() => this.props.reselectMeme(meme)} 
-                    changeText={() => this.props.changeText(meme)} 
-                    resetText={this.props.resetText}/>
-                ))
-              }
+              {memeDivList}
             </div>
           </div>
         </div>
+
+        <div>
+          <form onSubmit={this.handleSubmit} method="POST">
+            <button type="Submit"> Submit Meme </button>
+          </form> 
+        </div>
+
       </div>
     );
   }
