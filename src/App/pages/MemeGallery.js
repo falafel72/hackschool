@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 require('../style/meme.css');
 
 /** Component that handles the overall meme gallery page.*/
@@ -108,10 +109,7 @@ class LikesController extends React.Component{
     const buttonType = this.state.isBolded ? "likedButton" : "unlikedButton";
     return(
       <form onSubmit={this.handleLike}>
-        <button className={buttonType} type="Submit">
-          <span role="image" aria-label="like"> 👍 </span>
-          {this.state.likes}
-        </button>
+        <button className={buttonType} type="Submit">👍 {this.state.likes}</button>
       </form> 
     )
   }
