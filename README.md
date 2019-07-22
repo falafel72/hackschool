@@ -76,3 +76,5 @@ https://www.codementor.io/kakarganpat/how-to-setup-react-and-node-js-in-a-projec
 https://www.twilio.com/blog/react-app-with-node-js-server-proxy
 
 https://dev.to/shoupn/javascript-fetch-api-and-using-asyncawait-47mp
+
+https://www.kirupa.com/html5/emoji.htm
