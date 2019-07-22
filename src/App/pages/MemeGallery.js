@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 require('../style/meme.css');
 
 /** Component that handles the overall meme gallery page.*/
@@ -6,7 +7,6 @@ class MemeGallery extends React.Component {
 
   constructor() {
     super();
-
     fetch('/getmemes')
       .then(response => response.json())
       .then(data => {
@@ -24,7 +24,8 @@ class MemeGallery extends React.Component {
   render() {
     let ourFavorites = this.state.memeArray ? this.state.memeArray.map ((meme) => 
       <MemeModel 
-        key={meme.id}
+        key={meme._id}
+        id={meme._id}
         photoURL={meme.photoURL}
         topText={meme.topText}
         bottomText={meme.bottomText}
@@ -63,7 +64,8 @@ class MemeModel extends React.Component{
         </div>
         <div className="controls">
           <h4> by {this.props.user} </h4>
-          <LikesController likes={this.props.likes} />
+          <LikesController likes={this.props.likes}
+                           id={this.state.id} />
         </div>
       </div>
     )
@@ -83,10 +85,28 @@ class LikesController extends React.Component{
 
   handleLike(event){
     event.preventDefault();
+    let postConfig = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify( 
+        {id: this.props.id, 
+         likes: this.state.likes, 
+         isBolded: this.state.isBolded})
+    };
+    fetch('/likememe', postConfig)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        this.setState(data);
+      })
+      .catch((err) => console.log(err));
   }
 
   render(){
-    let buttonType = this.state.isBolded ? "unselected" : "selected";
+    const buttonType = this.state.isBolded ? "likedButton" : "unlikedButton";
     return(
       <form onSubmit={this.handleLike}>
         <button className={buttonType} type="Submit">👍 {this.state.likes}</button>

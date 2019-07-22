@@ -13,6 +13,14 @@
     width: 50%;
 }
 
+.unlikedButton {
+
+}
+
+.likedButton {
+    font-weight: bold;
+}
+
 /*
 .memeModel{
     height: 500px;

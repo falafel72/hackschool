@@ -7,10 +7,10 @@ const logger = require('morgan');
 // url routes 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-// const uploadRouter = require('./routes/upload');
 
 // MongoDB database
-const mongoClient = require('mongodb').MongoClient;
+const mongo = require('mongodb');
+const mongoClient = mongo.MongoClient;
 const url = "mongodb://localhost:27017/memedb";
 const options = {
   useNewUrlParser: true 
@@ -18,7 +18,6 @@ const options = {
 
 let database;
 let memedb; 
-let id = 0;
 
 // express setup
 const app = express();
@@ -51,6 +50,7 @@ app.use('/', indexRouter);
 app.use('/test', usersRouter);
 app.post('/upload', upload);
 app.get('/getmemes', getMemes);
+app.post('/likememe', likeMeme);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -73,7 +73,7 @@ function upload(req, res){
   memeId = "meme_"+ id;
   let params = req.body;
   let fields = populateMemeFields(params.photoURL, params.topText, params.bottomText, params.user);
-  sendToDatabase(memeId, fields);
+  sendToDatabase(fields);
   res.redirect('/');
 }
 
@@ -87,18 +87,31 @@ function getMemes(req, res){
   });
 }
 
+// likememe router which updates the amount of likes a meme has
+function likeMeme(req, res){
+  const params = req.body; 
+  const query = {"_id": new mongo.ObjectID("" + params.id + "") };
+  console.log(params.isBolded);
+  const likeIncrement = (params.isBolded ? -1 : 1);
+
+  const response = {
+    isBolded: !params.isBolded,
+    likes: (params.likes + likeIncrement)
+  };
+  
+  res.send(response);
+}
+
 // helper function created to create a meme object in the database with its fields 
 function sendToDatabase(memeId, fields){
   memedb.insertOne(fields, function(err, res){
     if (err) throw err; 
-    console.log("Uploaded fields for " + memeId);
   });
 }
 
 // helper function to create & populate the JSON that will be sent to the database
 function populateMemeFields(photoURL, topText, bottomText, user){
   let memeObj = {
-    id: id,
     photoURL: photoURL,
     topText: topText,
     bottomText: bottomText,
