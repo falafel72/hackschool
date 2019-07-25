@@ -110,24 +110,29 @@ class MemeGeneratorWrapper extends React.Component {
     }
 
     // create post request
-    axios.post('https://api.imgflip.com/caption_image',data,(response) => {
-      console.log(response);
-      if (response.success) {
-        return response.data.url;
-      } else {
-        return null;
-      }
-    });
+    return new Promise((resolve, reject) => 
+      axios.post('https://api.imgflip.com/caption_image',data,(response) => {
+        console.log(response);
+        if (response.success) {
+          resolve(response.data.url);
+        } else {
+          reject(response.error_message);
+        }
+      })
+    );
   }
 
   downloadMeme = () => {
-    let url = this.createMeme();
-    if (url) {
-      // console.log(url);
-      this.props.downloadImage(url);
-    } else {
-      console.log("Error with creating meme!");
-    }
+    let urlPromise = this.createMeme();
+    urlPromise.then(
+      (url) => {
+        this.props.downloadImage(url);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+    
   }
   
   render() {
