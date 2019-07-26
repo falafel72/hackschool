@@ -4,7 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-// url routes 
+// url routes
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
@@ -13,11 +13,11 @@ const mongo = require('mongodb');
 const mongoClient = mongo.MongoClient;
 const url = "mongodb://localhost:27017/memedb";
 const options = {
-  useNewUrlParser: true 
+  useNewUrlParser: true
 }
 
 let database;
-let memedb; 
+let memedb;
 
 // express setup
 const app = express();
@@ -70,7 +70,6 @@ app.use(function(err, req, res, next) {
 
 // upload router to send an entry to the database
 function upload(req, res){
-  memeId = "meme_"+ id;
   let params = req.body;
   let fields = populateMemeFields(params.photoURL, params.topText, params.bottomText, params.user);
   sendToDatabase(fields);
@@ -80,16 +79,16 @@ function upload(req, res){
 // getMemes router which sends the meme data to the front-end
 function getMemes(req, res){
   let query = {};
-  memedb.find(query).toArray(function(err, result){ 
+  memedb.find(query).toArray(function(err, result){
     if (err) throw err;
     console.log(result);
-    res.send(JSON.stringify(result));  
+    res.send(JSON.stringify(result));
   });
 }
 
 // likememe router which updates the amount of likes a meme has
 function likeMeme(req, res){
-  const params = req.body; 
+  const params = req.body;
   const query = {"_id": new mongo.ObjectID("" + params.id + "") };
   console.log(params.isBolded);
   const likeIncrement = (params.isBolded ? -1 : 1);
@@ -98,14 +97,14 @@ function likeMeme(req, res){
     isBolded: !params.isBolded,
     likes: (params.likes + likeIncrement)
   };
-  
+
   res.send(response);
 }
 
-// helper function created to create a meme object in the database with its fields 
-function sendToDatabase(memeId, fields){
+// helper function created to create a meme object in the database with its fields
+function sendToDatabase(fields){
   memedb.insertOne(fields, function(err, res){
-    if (err) throw err; 
+    if (err) throw err;
   });
 }
 
@@ -119,8 +118,7 @@ function populateMemeFields(photoURL, topText, bottomText, user){
     likes: 0
   };
 
-  // increments id so each meme has a unique ID
-  id++;
+  // increments id so each meme has a unique I
   return memeObj;
 }
 
