@@ -3,7 +3,6 @@ require('../style/meme.css');
 
 /** Component that handles the overall meme gallery page.*/
 class MemeGallery extends React.Component {
-
   constructor() {
     super();
     fetch('/getmemes')
@@ -13,16 +12,15 @@ class MemeGallery extends React.Component {
           memeArray: data,
         })
       });
- 
+
     this.state = {
       memeArray: null,
     }
-
   }
 
   render() {
-    let ourFavorites = this.state.memeArray ? this.state.memeArray.map ((meme) => 
-      <MemeModel 
+    const ourFavorites = this.state.memeArray ? this.state.memeArray.map ((meme) =>
+      <MemeModel
         key={meme._id}
         id={meme._id}
         photoURL={meme.photoURL}
@@ -32,8 +30,11 @@ class MemeGallery extends React.Component {
         likes={meme.likes}
       />
     ) : null;
-    return( 
+
+    return(
+      // example of inline style
       <div>
+        <h2 style={{ textAlign: 'left', marginLeft: '10px' }}> Our Memes </h2>
         {ourFavorites}
       </div>
     );
@@ -56,7 +57,7 @@ class MemeModel extends React.Component{
   render(){
     return(
       <div className="memeModel">
-        <div className="memeImageText">
+        <div className="memeImageOutline">
           <img className="memeImage" src={this.state.photoURL} alt={this.state.photoURL}/>
           <h2> {this.props.topText} </h2>
           <h2> {this.props.bottomText} </h2>
@@ -88,11 +89,11 @@ class LikesController extends React.Component{
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json' 
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify( 
-        {id: this.props.id, 
-         likes: this.state.likes, 
+      body: JSON.stringify(
+        {id: this.props.id,
+         likes: this.state.likes,
          isBolded: this.state.isBolded})
     };
     fetch('/likememe', postConfig)
@@ -112,7 +113,7 @@ class LikesController extends React.Component{
           <span role="image" aria-label="like">👍 </span>
           {this.state.likes}
         </button>
-      </form> 
+      </form>
     )
   }
 
