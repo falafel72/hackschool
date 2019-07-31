@@ -6,7 +6,7 @@ import MemeGenerator from './pages/MemeGenerator';
 import MemeGallery from './pages/MemeGallery';
 
 const config = require('../config.json');
-  
+
 /** Main app controller */
 class App extends React.Component {
   downloadImage = (url) => {
@@ -30,10 +30,10 @@ class App extends React.Component {
         <div className="App">
         <NavBar />
         <MemeGeneratorWrapper downloadImage={this.downloadImage}/>
-        <Route 
+        <Route
           path="/gallery"
           render = {(routeProps) =>
-            <MemeGallery {...routeProps} />   
+            <MemeGallery {...routeProps} />
           } />
         </div>
       </Router>
@@ -46,9 +46,9 @@ class MemeGeneratorWrapper extends React.Component {
     super();
     /* get meme data via get request */
     axios.get('https://api.imgflip.com/get_memes')
-      .then(response => { 
+      .then(response => {
         if (response.data.success) {
-          let memes = response.data.data.memes; 
+          let memes = response.data.data.memes;
           this.setState((state) => ({
             memeArray: memes,
             currentMeme: memes[0],
@@ -90,7 +90,7 @@ class MemeGeneratorWrapper extends React.Component {
       displayName: state.currentMeme.name,
       isBold: true
     }));
-  } 
+  }
 
   handleMemeText = (index,text) => {
     let newMemeTextArray = this.state.memeText;
@@ -129,16 +129,16 @@ class MemeGeneratorWrapper extends React.Component {
       console.log("Error with creating meme!");
     }
   }
-  
+
   render() {
     return (
-      <Route 
+      <Route
         exact={true}
-        path='/' 
-        render = {(routeProps) => 
-          <MemeGenerator 
-            {...routeProps} 
-            memeArray={this.state.memeArray} 
+        path='/'
+        render = {(routeProps) =>
+          <MemeGenerator
+            {...routeProps}
+            memeArray={this.state.memeArray}
             currentMeme={this.state.currentMeme}
             displayName={this.state.memeArray ? this.state.displayName : 'Loading...'}
             reselectMeme={this.reselectMeme}
@@ -148,8 +148,9 @@ class MemeGeneratorWrapper extends React.Component {
             handleMemeText={this.handleMemeText}
             memeText={this.state.memeText}
             downloadMeme={this.downloadMeme}
+            createMeme={this.createMeme}
           />
-        } 
+        }
       />
     );
   }

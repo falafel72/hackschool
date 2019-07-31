@@ -30,7 +30,6 @@ class MemeGallery extends React.Component {
         likes={meme.likes}
       />
     ) : null;
-
     return(
       // example of inline style
       <div>

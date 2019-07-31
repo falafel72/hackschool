@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const axios = require('axios');
+const config = require('./config.json');
 
 // url routes
 const indexRouter = require('./routes/index');
@@ -70,10 +72,38 @@ app.use(function(err, req, res, next) {
 
 // upload router to send an entry to the database
 function upload(req, res){
-  let params = req.body;
-  let fields = populateMemeFields(params.photoURL, params.topText, params.bottomText, params.user);
-  sendToDatabase(fields);
-  res.redirect('/');
+  const params = req.body;
+  const apiData = {
+    template_id: params.template_id,
+    username: config.username,
+    password: config.password,
+    boxes: params.memeTexts.map((text) => {
+      return { "text": text };
+    })
+  };
+
+  // Creates the meme-like jpg using the imgflip API
+  const url = 'https://api.imgflip.com/caption_image?'
+    + 'template_id=' + apiData.template_id
+    + '&username=' + apiData.username
+    + '&password=' + apiData.password
+    + '&text0=' + (params.memeTexts[0] ? params.memeTexts[0] : "")
+    + '&text1=' + (params.memeTexts[1] ? params.memeTexts[1] : "");
+
+  axios.post(url)
+    .then((response) => {
+      if (response.data.success){
+        const fields = populateMemeFields(response.data.data.url, params.topText, params.bottomText, params.user);
+        sendToDatabase(fields);
+        res.redirect('/gallery');
+      } else{
+        console.log("Unsuccessful call to the imgflip API");
+        console.log(response);
+        res.redirect('/');
+      }
+    })
+    .catch( (err) => { throw err; } );
+
 }
 
 // getMemes router which sends the meme data to the front-end
@@ -99,6 +129,11 @@ function likeMeme(req, res){
   };
 
   res.send(response);
+}
+
+// caption_image by creating it with the imgflip api
+function captionImage(req, res){
+
 }
 
 // helper function created to create a meme object in the database with its fields
