@@ -119,7 +119,6 @@ function getMemes(req, res){
 // likememe router which updates the amount of likes a meme has
 function likeMeme(req, res){
   const params = req.body;
-  const query = {"_id": new mongo.ObjectID("" + params.id + "") };
   console.log(params.isBolded);
   const likeIncrement = (params.isBolded ? -1 : 1);
 
@@ -128,12 +127,11 @@ function likeMeme(req, res){
     likes: (params.likes + likeIncrement)
   };
 
+  // increments like count of the actual meme object
+  const query = {"_id": new mongo.ObjectID("" + params.id + "") };
+  memedb.updateOne( query, { $set: { likes: response.likes, isBolded: response.isBolded } });
+
   res.send(response);
-}
-
-// caption_image by creating it with the imgflip api
-function captionImage(req, res){
-
 }
 
 // helper function created to create a meme object in the database with its fields
@@ -150,7 +148,8 @@ function populateMemeFields(photoURL, topText, bottomText, user){
     topText: topText,
     bottomText: bottomText,
     user: user,
-    likes: 0
+    likes: 0,
+    isBolded: false
   };
 
   // increments id so each meme has a unique I

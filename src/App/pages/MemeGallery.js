@@ -28,6 +28,7 @@ class MemeGallery extends React.Component {
         bottomText={meme.bottomText}
         user={meme.user}
         likes={meme.likes}
+        isBolded={meme.isBolded}
       />
     ) : null;
     return(
@@ -64,6 +65,7 @@ class MemeModel extends React.Component{
         <div className="controls">
           <h4> by {this.props.user} </h4>
           <LikesController likes={this.props.likes}
+                           isBolded={this.props.isBolded}
                            id={this.state.id} />
         </div>
       </div>
@@ -76,7 +78,7 @@ class LikesController extends React.Component{
     super(props);
     this.state = {
       likes: this.props.likes,
-      isBolded: false,
+      isBolded: this.props.isBolded,
     }
 
     this.handleLike = this.handleLike.bind(this);
@@ -115,7 +117,6 @@ class LikesController extends React.Component{
       </form>
     )
   }
-
 }
 
 export default MemeGallery;
