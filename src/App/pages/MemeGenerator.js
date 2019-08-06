@@ -4,12 +4,12 @@ import axios from 'axios';
 /** Component for selecting meme template */
 const TemplateButton = (props) => {
   return (
-    <img 
+    <img
         key={props.meme.id}
-        width='50' 
-        height='50' 
-        src={props.meme.url} 
-        alt='' 
+        width='50'
+        height='50'
+        src={props.meme.url}
+        alt=''
         onClick={props.reselectMeme}
         onMouseOver={props.changeText}
         onMouseLeave={props.resetText}
@@ -22,9 +22,9 @@ const MemeTextBox = (props) => {
   return (
     <div className='memetext'>
       <p>Text Box {props.index + 1}</p>
-      <textarea 
-        cols='50' 
-        rows='5' 
+      <textarea
+        cols='50'
+        rows='5'
         onChange={e => props.handleMemeText(props.index,e.target.value)}>
       </textarea>
     </div>
@@ -35,7 +35,7 @@ const MemeTextBox = (props) => {
 class MemeGenerator extends React.Component {
   constructor() {
     super();
-      
+
     this.state = {
       searchTerm: ""
     };
@@ -43,16 +43,16 @@ class MemeGenerator extends React.Component {
 
   handleInput = (text) => {
     this.setState(() => ({
-      searchTerm: text 
+      searchTerm: text
     }));
   }
 
   uploadMeme = (event) => {
     event.preventDefault();
     let myImg = {
+      template_id: this.props.currentMeme.id,
       photoURL: this.props.currentMeme.url,
-      topText: this.props.memeText[0],
-      bottomText: this.props.memeText[1],
+      memeTexts: this.props.memeText,
       user: "Daniel Truong"
     };
     axios.post('/upload', myImg)
@@ -68,7 +68,7 @@ class MemeGenerator extends React.Component {
     let regexp = new RegExp(this.state.searchTerm,'gi');
     return (this.state.searchTerm === "" || meme.name.match(regexp) != null);
   }
-  
+
   createTextBoxes = () => {
     let boxList = [];
     if (this.props.currentMeme) {
@@ -83,7 +83,7 @@ class MemeGenerator extends React.Component {
 
   render() {
     let imgObj = this.props.memeArray ? this.props.currentMeme : null;
-    return ( 
+    return (
       <div className='meme-gen'>
         {/* align left  */}
         <div className='img-preview'>
@@ -105,13 +105,13 @@ class MemeGenerator extends React.Component {
             }}>{this.props.displayName}</p>
             <div id='meme-templates'>
               {
-                this.props.memeArray && 
+                this.props.memeArray &&
                 this.props.memeArray.filter(this.checkMatch).map((meme) => (
-                  <TemplateButton 
-                    key={meme.id} 
-                    meme={meme} 
-                    reselectMeme={() => this.props.reselectMeme(meme)} 
-                    changeText={() => this.props.changeText(meme)} 
+                  <TemplateButton
+                    key={meme.id}
+                    meme={meme}
+                    reselectMeme={() => this.props.reselectMeme(meme)}
+                    changeText={() => this.props.changeText(meme)}
                     resetText={this.props.resetText}/>
                 ))
               }
@@ -123,7 +123,7 @@ class MemeGenerator extends React.Component {
   }
 }
 
-/** 
+/**
  * Component for rendering all canvas elements
  * May be used to also draw text
  */
@@ -164,8 +164,8 @@ class Canvas extends React.Component {
     }
     return (
       <div>
-        <canvas 
-          width={width} 
+        <canvas
+          width={width}
           height={height}
           ref={this.canvasRef}
         />
