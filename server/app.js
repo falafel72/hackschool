@@ -97,11 +97,11 @@ function upload(req, res){
       if (response.data.success){
         const fields = populateMemeFields(response.data.data.url, params.topText, params.bottomText, params.user);
         sendToDatabase(fields);
-        res.redirect('/gallery');
+        res.sendStatus(200);
       } else{
         console.log("Unsuccessful call to the imgflip API");
         console.log(response.data.error_message);
-        res.redirect('/');
+        res.sendStatus(404);
       }
     })
     .catch( (err) => { throw err; } );

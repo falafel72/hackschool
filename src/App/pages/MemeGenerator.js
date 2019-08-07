@@ -57,7 +57,9 @@ class MemeGenerator extends React.Component {
     };
     axios.post('/upload', myImg)
       .then(response => {
-        console.log("Image has been uploaded: " + myImg.photoURL);
+        if (response.status == 200){
+          window.location.href = "/gallery";
+        }
       })
       .catch(err => {
         console.log(err);
