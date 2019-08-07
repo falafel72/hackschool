@@ -78,3 +78,5 @@ https://www.twilio.com/blog/react-app-with-node-js-server-proxy
 https://dev.to/shoupn/javascript-fetch-api-and-using-asyncawait-47mp
 
 https://www.kirupa.com/html5/emoji.htm
+
+http://medium.com/@dtkatz/3-way-to-fix-the-cors-error-and-how-access-control-allow-origin-works-d97d55946d9

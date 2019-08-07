@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const axios = require('axios');
+const qs = require('qs');
 const config = require('./config.json');
 
 // url routes
@@ -82,15 +83,16 @@ function upload(req, res){
     })
   };
 
-  // Creates the meme-like jpg using the imgflip API
-  const url = 'https://api.imgflip.com/caption_image?'
-    + 'template_id=' + apiData.template_id
-    + '&username=' + apiData.username
-    + '&password=' + apiData.password
-    + '&text0=' + (params.memeTexts[0] ? params.memeTexts[0] : "")
-    + '&text1=' + (params.memeTexts[1] ? params.memeTexts[1] : "");
+  const url = 'https://api.imgflip.com/caption_image';
 
-  axios.post(url)
+  axios({
+    method: 'post',
+    url: url,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data: qs.stringify(apiData)
+  })
     .then((response) => {
       if (response.data.success){
         const fields = populateMemeFields(response.data.data.url, params.topText, params.bottomText, params.user);
@@ -98,7 +100,7 @@ function upload(req, res){
         res.redirect('/gallery');
       } else{
         console.log("Unsuccessful call to the imgflip API");
-        console.log(response);
+        console.log(response.data.error_message);
         res.redirect('/');
       }
     })
