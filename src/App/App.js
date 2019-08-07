@@ -25,10 +25,12 @@ class App extends React.Component {
   }
 
   render() {
+    // gets the URL pathname 
+    const pageName = String(window.location).split("/")[3];
     return (
       <Router>
         <div className="App">
-        <NavBar />
+        <NavBar page={pageName}/>
         <MemeGeneratorWrapper downloadImage={this.downloadImage}/>
         <Route
           path="/gallery"
@@ -64,7 +66,7 @@ class MemeGeneratorWrapper extends React.Component {
       displayName: 'Loading...',
       isBold: false,
       memeText: []
-    }
+    };
   }
 
    /* called when meme template is changed */
@@ -157,15 +159,50 @@ class MemeGeneratorWrapper extends React.Component {
 }
 
 /** Component for navigational buttons */
+/*
 class NavBar extends React.Component {
   render() {
     return(
-      <div className='nav-bar'>
-        <Link to='/'>Meme Generator</Link>
-        <Link to='/gallery'>Gallery</Link>
-      </div>
+      <section id='nav-bar'>
+        <h1 id="acm"> ACM UCSD Meme Gen </h1>
+        <div id="links-section">
+          <div>
+            <a className="link" id="acm-generator" href="/">Generator</a>
+            <a className="link" id="acm-gallery" href="/gallery">Gallery</a>
+          </div>
+        </div>
+      </section>
     );
   }
+}
+*/
+
+const NavBar = (props) => {
+  let links;
+  if (props.page === ""){
+    links =   
+      <div>
+        <a className="link selected" id="acm-generator" href="/">Generator</a>
+        <a className="link" id="acm-gallery" href="/gallery">Gallery</a>
+      </div>;
+  }
+  else if (props.page === "gallery"){
+    links =   
+      <div>
+        <a className="link" id="acm-generator" href="/">Generator</a>
+        <a className="link selected" id="acm-gallery" href="/gallery">Gallery</a>
+      </div>;
+    
+  }
+ 
+  return(
+    <section id='nav-bar'>
+      <h1 id="acm"> ACM UCSD Meme Gen </h1>
+      <div id="links-section">
+          {links};
+      </div>
+    </section>
+  ); 
 }
 
 export default App;
