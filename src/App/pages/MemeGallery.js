@@ -34,7 +34,7 @@ class MemeGallery extends React.Component {
     return(
       // example of inline style
       <div>
-        <h2 className="title">Meme Generator</h2>
+        <h2 className="title">Meme Gallery</h2>
         {ourFavorites}
       </div>
     );
