@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+require('../style/generator.css')
 
 /** Component for selecting meme template */
 const TemplateButton = (props) => {
@@ -24,7 +25,7 @@ const MemeTextBox = (props) => {
       <p>Text Box {props.index + 1}</p>
       <textarea
         cols='50'
-        rows='5'
+        rows='2'
         onChange={e => props.handleMemeText(props.index,e.target.value)}>
       </textarea>
     </div>
@@ -87,19 +88,20 @@ class MemeGenerator extends React.Component {
     let imgObj = this.props.memeArray ? this.props.currentMeme : null;
     return (
       <div className='meme-gen'>
+        <h2 className="title">Meme Generator</h2>
         {/* align left  */}
         <div className='img-preview'>
           <Canvas imgObj={imgObj} />
-          <div>
-            <button type="submit" onClick={this.uploadMeme}> Submit Meme </button>
-            <button type="submit" onClick={this.props.downloadMeme}>Download Meme</button>
-          </div>
         {/* align right */}
         </div>
         <div className='textboxes'>
           {this.createTextBoxes()}
         </div>
-        <div className='template-search' >
+       <div className='template-search' >
+          <div className='buttons-section'>
+            <button type="submit" onClick={this.uploadMeme}> Submit Meme </button>
+            <button type="submit" onClick={this.props.downloadMeme}>Download Meme</button>
+          </div>
           <input id='search' type='text' onChange={e => this.handleInput(e.target.value)}></input>
           <div id='catalogue'>
             <p style={{

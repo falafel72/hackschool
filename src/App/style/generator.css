@@ -1,0 +1,18 @@
+.buttons-section{
+  width: 100%;
+  align-self: right;
+  margin-bottom: 20px;
+  margin-top: 5px;
+  position: relative;
+}
+
+.img-preview {
+  float: left;
+  width: 50%;
+}
+
+.template-search {
+  float: right;
+  width: 50%;
+  margin-right: 5px;
+}

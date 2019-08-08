@@ -58,3 +58,13 @@
 .selected{
   background-color:;
 }
+
+.title{
+  color: #22ACEA;
+  font-family: Nunito;
+  font-size: 36px;
+  font-style: bold;
+  font-weight: normal;
+  position: relative;
+  text-align: center;
+}
