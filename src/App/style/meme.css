@@ -2,12 +2,11 @@
 .likedButton {
   font-weight: bold;
 }
-
-.memeImage{
+ .memeImage{
   height: auto;
   max-height: 300px;
+  max-width: 300px;
   object-fit: cover;
-  width: 300px;
 }
 
 .memeImageOutline{
@@ -15,7 +14,6 @@
 }
 
 .memeModel{
-  border-color: #22ACEA;
   border-radius: 1px;
   border-width: 1px;
   border: solid;
@@ -24,8 +22,8 @@
   float: left;
   height: 400px;
   margin-bottom: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: 8px;
+  margin-right: 8px;
   padding-top: 10px;
   transition: 0.3s;
   width: 350px;
@@ -36,10 +34,3 @@
 }
 
 .unlikedButton {  }
-
-
-
-
-
-
-

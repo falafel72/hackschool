@@ -88,8 +88,8 @@ class MemeGenerator extends React.Component {
     let imgObj = this.props.memeArray ? this.props.currentMeme : null;
     return (
       <div className='meme-gen'>
-        <h2 className="title">Meme Generator</h2>
         {/* align left  */}
+        <h2 className="title">Meme Generator</h2>
         <div className='img-preview'>
           <Canvas imgObj={imgObj} />
         {/* align right */}
