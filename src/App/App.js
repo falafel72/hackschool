@@ -204,7 +204,7 @@ const NavBar = (props) => {
     <section id='nav-bar'>
       <h1 id="acm"> ACM UCSD Meme Gen </h1>
       <div id="links-section">
-          {links};
+          {links}
       </div>
     </section>
   ); 

@@ -58,7 +58,7 @@ class MemeGenerator extends React.Component {
     };
     axios.post('/upload', myImg)
       .then(response => {
-        if (response.status == 200){
+        if (response.status === 200){
           window.location.href = "/gallery";
         }
       })
@@ -90,38 +90,44 @@ class MemeGenerator extends React.Component {
       <div className='meme-gen'>
         {/* align left  */}
         <h2 className="title">Meme Generator</h2>
-        <div className='img-preview'>
-          <Canvas imgObj={imgObj} />
-        {/* align right */}
-        </div>
-        <div className='textboxes'>
-          {this.createTextBoxes()}
-        </div>
-       <div className='template-search' >
-          <div className='buttons-section'>
-            <button type="submit" onClick={this.uploadMeme}> Submit Meme </button>
-            <button type="submit" onClick={this.props.downloadMeme}>Download Meme</button>
+
+        <div className='left-col'>
+          <div className='img-preview'>
+            <Canvas imgObj={imgObj} />
           </div>
-          <input id='search' type='text' onChange={e => this.handleInput(e.target.value)}></input>
-          <div id='catalogue'>
-            <p style={{
-              fontWeight: this.props.isBold ? 'bold' : 'normal'
-            }}>{this.props.displayName}</p>
-            <div id='meme-templates'>
-              {
-                this.props.memeArray &&
-                this.props.memeArray.filter(this.checkMatch).map((meme) => (
-                  <TemplateButton
-                    key={meme.id}
-                    meme={meme}
-                    reselectMeme={() => this.props.reselectMeme(meme)}
-                    changeText={() => this.props.changeText(meme)}
-                    resetText={this.props.resetText}/>
-                ))
-              }
+        </div>
+        
+        <div className='right-col'>
+          <div className='textboxes'>
+            {this.createTextBoxes()}
+          </div>
+          <div className='template-search'>
+            <div className='buttons-section'>
+              <button type="submit" onClick={this.uploadMeme}> Submit Meme </button>
+              <button type="submit" onClick={this.props.downloadMeme}>Download Meme</button>
+            </div>
+            <input id='search' type='text' onChange={e => this.handleInput(e.target.value)}></input>
+            <div id='catalogue'>
+              <p style={{
+                fontWeight: this.props.isBold ? 'bold' : 'normal'
+              }}>{this.props.displayName}</p>
+              <div id='meme-templates'>
+                {
+                  this.props.memeArray &&
+                  this.props.memeArray.filter(this.checkMatch).map((meme) => (
+                    <TemplateButton
+                      key={meme.id}
+                      meme={meme}
+                      reselectMeme={() => this.props.reselectMeme(meme)}
+                      changeText={() => this.props.changeText(meme)}
+                      resetText={this.props.resetText}/>
+                  ))
+                }
+              </div>
             </div>
           </div>
         </div>
+       
       </div>
     );
   }

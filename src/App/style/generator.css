@@ -6,14 +6,13 @@
   position: relative;
 }
 
-.img-preview {
+.left-col { 
   float: left;
   width: 50%;
-
 }
 
-.template-search {
+.right-col {
   float: right;
   width: 50%;
-  margin-right: 5px;
 }
+
