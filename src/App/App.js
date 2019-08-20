@@ -4,25 +4,12 @@ import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import './App.css';
 import MemeGenerator from './pages/MemeGenerator';
 import MemeGallery from './pages/MemeGallery';
+import * as UtilityFuncs from './utility'
 
 const config = require('../config.json');
 
 /** Main app controller */
 class App extends React.Component {
-  downloadImage = (url) => {
-    axios({
-      url: url,
-      method: 'GET',
-      responseType: 'blob', // important
-    }).then((response) => {
-       const url = window.URL.createObjectURL(new Blob([response.data]));
-       const link = document.createElement('a');
-       link.href = url;
-       link.setAttribute('download', 'file.pdf'); //or any other extension
-       document.body.appendChild(link);
-       link.click();
-    });
-  }
 
   render() {
     // gets the URL pathname 
@@ -31,7 +18,7 @@ class App extends React.Component {
       <Router>
         <div className="App">
         <NavBar page={pageName}/>
-        <MemeGeneratorWrapper downloadImage={this.downloadImage}/>
+        <MemeGeneratorWrapper />
         <Route
           path="/gallery"
           render = {(routeProps) =>
@@ -111,7 +98,7 @@ class MemeGeneratorWrapper extends React.Component {
       text1: this.state.memeText[1],
     }
 
-    // create post request
+    // create post requestuuu`u
     return new Promise((resolve, reject) => 
       axios.post('https://api.imgflip.com/caption_image',data,(response) => {
         console.log(response);
@@ -124,17 +111,20 @@ class MemeGeneratorWrapper extends React.Component {
     );
   }
 
-  downloadMeme = () => {
-    let urlPromise = this.createMeme();
-    urlPromise.then(
+  createMeme = () => {
+    let response = UtilityFuncs.createMeme(this.state);
+    response.then(
       (url) => {
-        this.props.downloadImage(url);
+        console.log("Meme created at " + url);
       },
       (error) => {
         console.log(error);
       }
-    );
-    
+    )
+  }
+
+  downloadMeme = () => {
+    UtilityFuncs.downloadMeme(this.state);
   }
 
   render() {
@@ -164,24 +154,6 @@ class MemeGeneratorWrapper extends React.Component {
 }
 
 /** Component for navigational buttons */
-/*
-class NavBar extends React.Component {
-  render() {
-    return(
-      <section id='nav-bar'>
-        <h1 id="acm"> ACM UCSD Meme Gen </h1>
-        <div id="links-section">
-          <div>
-            <a className="link" id="acm-generator" href="/">Generator</a>
-            <a className="link" id="acm-gallery" href="/gallery">Gallery</a>
-          </div>
-        </div>
-      </section>
-    );
-  }
-}
-*/
-
 const NavBar = (props) => {
   let links;
   if (props.page === ""){
