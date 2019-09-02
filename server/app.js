@@ -50,10 +50,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/test', usersRouter);
 app.post('/upload', upload);
 app.get('/getmemes', getMemes);
 app.post('/likememe', likeMeme);
+app.get('/test',test);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -97,11 +97,17 @@ function upload(req, res){
       if (response.data.success){
         const fields = populateMemeFields(response.data.data.url, params.topText, params.bottomText, params.user);
         sendToDatabase(fields);
-        res.sendStatus(200);
+        res.status(200).send({
+          success: true,
+          url: response.data.data.url
+        });
       } else{
         console.log("Unsuccessful call to the imgflip API");
         console.log(response.data.error_message);
-        res.sendStatus(404);
+        res.status(404).send({
+          success: false,
+          error_message: response.data.error_message
+        });
       }
     })
     .catch( (err) => { throw err; } );
@@ -113,7 +119,6 @@ function getMemes(req, res){
   let query = {};
   memedb.find(query).toArray(function(err, result){
     if (err) throw err;
-    console.log(result);
     res.send(JSON.stringify(result));
   });
 }
@@ -121,7 +126,6 @@ function getMemes(req, res){
 // likememe router which updates the amount of likes a meme has
 function likeMeme(req, res){
   const params = req.body;
-  console.log(params.isBolded);
   const likeIncrement = (params.isBolded ? -1 : 1);
 
   const response = {

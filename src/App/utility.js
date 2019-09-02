@@ -5,19 +5,22 @@ import download from 'downloadjs';
 export let createMeme = (state) => {
   let data = {
     template_id: state.currentMeme.id,
-    text0: state.memeText[0],
-    text1: state.memeText[1]
+    memeTexts: state.memeText
   }
 
   // create post request
   return new Promise((resolve, reject) => 
-    axios.post('localhost:3000/upload',data,(response) => {
-      console.log(response);
-      if (response.success) {
-        resolve(response.data.url);
-      } else {
-        reject(response.error_message);
-      }
+    axios({
+      method: 'post',
+      url: '/upload',
+      data: data 
+    })
+      .then((response) => {
+        if (response.data.success) {
+          resolve(response.data.url);
+        } else {
+          reject(response.data.error_message);
+        }
     })
   );
 }
@@ -37,6 +40,7 @@ export let downloadMeme = (state) => {
 
 /* downloads an image given a url */
 export let downloadImage = (url) => {
+  let imgName = url.match(/\w*\.\w*$/)[0];
   axios(
     {
       url: url, 
@@ -44,6 +48,6 @@ export let downloadImage = (url) => {
       responseType: 'blob'
     }
   ).then((response) => {
-    download(response.data, 'test.png', 'image/png');
+    download(response.data, imgName, 'image/png');
   });
 }

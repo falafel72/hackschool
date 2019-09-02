@@ -1,12 +1,11 @@
 import React from 'react';
 import axios from 'axios';
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import './App.css';
 import MemeGenerator from './pages/MemeGenerator';
 import MemeGallery from './pages/MemeGallery';
 import * as UtilityFuncs from './utility'
 
-const config = require('../config.json');
 
 /** Main app controller */
 class App extends React.Component {
@@ -89,39 +88,6 @@ class MemeGeneratorWrapper extends React.Component {
     }));
   }
 
-  createMeme = () => {
-    let data = {
-      template_id: this.state.currentMeme.id,
-      username: config.username,
-      password: config.password,
-      text0: this.state.memeText[0],
-      text1: this.state.memeText[1],
-    }
-
-    // create post requestuuu`u
-    return new Promise((resolve, reject) => 
-      axios.post('https://api.imgflip.com/caption_image',data,(response) => {
-        console.log(response);
-        if (response.success) {
-          resolve(response.data.url);
-        } else {
-          reject(response.error_message);
-        }
-      })
-    );
-  }
-
-  createMeme = () => {
-    let response = UtilityFuncs.createMeme(this.state);
-    response.then(
-      (url) => {
-        console.log("Meme created at " + url);
-      },
-      (error) => {
-        console.log(error);
-      }
-    )
-  }
 
   downloadMeme = () => {
     UtilityFuncs.downloadMeme(this.state);
@@ -145,7 +111,7 @@ class MemeGeneratorWrapper extends React.Component {
             handleMemeText={this.handleMemeText}
             memeText={this.state.memeText}
             downloadMeme={this.downloadMeme}
-            createMeme={this.createMeme}
+            // createMeme={this.createMeme}
           />
         }
       />
