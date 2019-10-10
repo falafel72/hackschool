@@ -42,7 +42,6 @@ mongoClient.connect(url, options, function(err, db) {
     memedb = database.collection("memes");
 });
 
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -52,6 +51,7 @@ app.post('/likememe', likeMeme);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  // eslint-disable-next-line no-undef
   next(createError(404));
 });
 
