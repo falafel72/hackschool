@@ -32,20 +32,6 @@ class App extends React.Component {
 class MemeGeneratorWrapper extends React.Component {
   constructor() {
     super();
-    /* get meme data via get request */
-    axios.get('https://api.imgflip.com/get_memes')
-      .then(response => {
-        if (response.data.success) {
-          let memes = response.data.data.memes;
-          this.setState((state) => ({
-            memeArray: memes,
-            currentMeme: memes[0],
-            displayName: memes[0].name,
-            isBold: true,
-            memeText: new Array(memes[0].box_count)
-          }));
-        }
-      });
     this.state = {
       memeArray: null,
       currentMeme: null,
@@ -53,6 +39,23 @@ class MemeGeneratorWrapper extends React.Component {
       isBold: false,
       memeText: []
     };
+  }
+
+  componentWillMount() {
+    /* get meme data via get request */
+    axios.get('https://api.imgflip.com/get_memes')
+    .then(response => {
+      if (response.data.success) {
+        let memes = response.data.data.memes;
+        this.setState((state) => ({
+          memeArray: memes,
+          currentMeme: memes[0],
+          displayName: memes[0].name,
+          isBold: true,
+          memeText: new Array(memes[0].box_count)
+        }));
+      }
+    });
   }
 
    /* called when meme template is changed */

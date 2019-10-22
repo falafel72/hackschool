@@ -53,7 +53,6 @@ app.use('/', indexRouter);
 app.post('/upload', upload);
 app.get('/getmemes', getMemes);
 app.post('/likememe', likeMeme);
-app.get('/test',test);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

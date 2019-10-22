@@ -111,7 +111,7 @@ class LikesController extends React.Component{
     return(
       <form onSubmit={this.handleLike}>
         <button className={buttonType} type="Submit">
-          <span role="image" aria-label="like">👍 </span>
+          <span role="img" aria-label="like">👍 </span>
           {this.state.likes}
         </button>
       </form>
