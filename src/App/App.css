@@ -6,24 +6,21 @@
   font-size: 40px;
   font-style: normal;
   font-weight: bold;
-  height: 50px;
-  line-height: 50%;
-  position: absolute;
   width: 450px;
 }
 
 #nav-bar{
+  align-items: center;
   background: #22ACEA;
+  display: flex;
+  justify-content: space-between;
   height: 75px;
 }
 
 #links-section{
   align-items: center;
   display: flex;
-  float: right;
-  height: 100%;
-  justify-content: center;
-  width: 20%;
+  justify-content: flex-end;
 }
 
 .App {
@@ -53,10 +50,6 @@
 
 .link:hover{
   font-weight: bold;
-}
-
-.selected{
-  background-color:;
 }
 
 .title{
