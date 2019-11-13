@@ -7,10 +7,9 @@ class MemeGallery extends React.Component {
   constructor() {
     super();
     axios.get('/getmemes')
-      .then(response => response.json())
-      .then(data => {
+      .then(response => {
         this.setState({
-          memeArray: data,
+          memeArray: response.data,
         })
       });
 
