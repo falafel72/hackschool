@@ -15,7 +15,7 @@ const qs = require('qs');
 // MongoDB database
 const mongo = require('mongodb');
 const mongoClient = mongo.MongoClient;
-const url = config.dburl;
+const url = process.env.MONGODB_URI;
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -76,8 +76,8 @@ function upload(req, res){
   const params = req.body;
   const apiData = {
     template_id: params.template_id,
-    username: config.username,
-    password: config.password,
+    username: process.env.IMGFLIP_USERNAME,
+    password: process.env.IMGFLIP_PASSWORD,
     boxes: params.memeTexts.map((text) => {
       return { "text": text };
     })
