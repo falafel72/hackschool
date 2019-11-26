@@ -3,6 +3,7 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const path = require('path');
 app.use(cors());
 const server = http.createServer(app);
 
@@ -14,13 +15,13 @@ const qs = require('qs');
 // MongoDB database
 const mongo = require('mongodb');
 const mongoClient = mongo.MongoClient;
-const url = "mongodb://heroku_zhk4pt59:fs974t53ihu18s2q4jkp6as4a1@ds149218.mlab.com:49218/heroku_zhk4pt59";
+const url = config.dburl;
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 server.listen(port, '0.0.0.0', () => {
     console.log(`Server listening on port ${port}`);
 });
@@ -44,10 +45,14 @@ mongoClient.connect(url, options, function(err, db) {
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'build')));
 
 app.post('/upload', upload);
 app.get('/getmemes', getMemes);
 app.post('/likememe', likeMeme);
+app.get('*',function(req,res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
